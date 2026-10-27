@@ -1,0 +1,41 @@
+{
+  "_说明": "手绘素材清单。把同名文件放进对应目录即可生效，不需要改代码。留空或文件缺失时自动回退到内置 SVG，页面不会报错。",
+  "version": 1,
+  "baseSize": {
+    "_说明": "建议画布尺寸与留白，便于统一替换",
+    "pet": "360x360 透明 PNG，主体居中，底部留 8% 空白",
+    "room": "800x560 透明 PNG"
+  },
+  "pet": {
+    "idle": {
+      "file": "pet/idle.png",
+      "desc": "待机：没开始学习时，轻微呼吸"
+    },
+    "studying": {
+      "file": "pet/studying.png",
+      "desc": "学习中：眼睛半闭/专注，配合台灯亮起"
+    },
+    "resting": {
+      "file": "pet/resting.png",
+      "desc": "休息：打盹，对应计时器的休息模式"
+    },
+    "celebrate": {
+      "file": "pet/celebrate.png",
+      "desc": "庆祝：完成一轮专注时短暂播放"
+    }
+  },
+  "room": {
+    "window": { "file": "room/window.png", "desc": "窗户，可换季节/天气" },
+    "shelf": { "file": "room/shelf.png", "desc": "书架" },
+    "plant": { "file": "room/plant.png", "desc": "绿植，可做多套皮肤" },
+    "rug": { "file": "room/rug.png", "desc": "地毯" },
+    "desk": { "file": "room/desk.png", "desc": "书桌" },
+    "lamp": { "file": "room/lamp.png", "desc": "台灯，学习时会发光" }
+  },
+  "rules": {
+    "naming": "文件名严格一致，区分大小写；扩展名统一用 .png 或 .webp",
+    "fallback": "任一素材缺失时使用内置矢量版本，不影响功能演示",
+    "weight": "单张建议控制在 200KB 以内，宠物图不超过 400KB，保证手机端加载速度",
+    "animation": "暂只支持静态图切换，逐帧动画留到后续版本再做"
+  }
+}

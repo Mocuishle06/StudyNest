@@ -1,0 +1,249 @@
+/* StudyNest 账号界面样式
+ * 配色沿用主样式：底色 #faf5ec、主色 #a9806c、文字 #54483f、描边 #eadfd1
+ */
+
+.auth-chip {
+  border: 1px solid #eadacb;
+  background: #f5e9db;
+  color: #795e4f;
+  border-radius: 999px;
+  padding: 7px 13px;
+  font-size: 13px;
+  line-height: 1.4;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background .15s, transform .15s;
+}
+.auth-chip:hover { background: #efe0cd; transform: translateY(-1px); }
+.auth-chip[data-state="in"] { background: #eef3e8; border-color: #d8e4cc; color: #5c7350; }
+
+/* 顶栏在窄屏会挤，账号按钮允许换行显示在日期上方 */
+@media (max-width: 520px) {
+  .head { flex-wrap: wrap; }
+  .auth-chip { order: 3; margin-left: auto; }
+}
+
+.auth-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(84, 72, 63, .38);
+  backdrop-filter: blur(3px);
+  animation: auth-fade .18s ease-out;
+}
+.auth-mask[hidden] { display: none; }
+
+.auth-card {
+  position: relative;
+  width: 100%;
+  max-width: 380px;
+  max-height: calc(100vh - 36px);
+  overflow-y: auto;
+  background: #fffdf8;
+  border: 1px solid #eadfd1;
+  border-radius: 24px;
+  padding: 26px 24px 20px;
+  box-shadow: 0 24px 60px rgba(115, 86, 64, .22);
+  animation: auth-rise .22s ease-out;
+}
+
+.auth-x {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #b6a294;
+  font-size: 22px;
+  line-height: 1;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.auth-x:hover { background: #f4ebdf; color: #7b6555; }
+
+.auth-title { margin: 0 0 6px; font-size: 19px; color: #4d4037; }
+.auth-sub { margin: 0 0 18px; font-size: 13px; line-height: 1.6; color: #99877a; }
+
+.auth-form { display: block; }
+.auth-form[hidden] { display: none; }
+
+.auth-field { display: block; margin-bottom: 13px; }
+.auth-field > span {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  color: #7b6555;
+}
+.auth-field input {
+  width: 100%;
+  border: 1px solid #e5d7c9;
+  border-radius: 13px;
+  padding: 11px 12px;
+  background: #fff;
+  color: #55483f;
+  font-size: 15px;
+}
+.auth-field input:focus {
+  outline: none;
+  border-color: #a9806c;
+  box-shadow: 0 0 0 3px rgba(169, 128, 108, .14);
+}
+
+.auth-err {
+  margin: 0 0 12px;
+  padding: 9px 11px;
+  border-radius: 12px;
+  background: #fdf0ec;
+  border: 1px solid #f2d6cc;
+  color: #a5593f;
+  font-size: 12.5px;
+  line-height: 1.55;
+  word-break: break-word;
+}
+.auth-err[hidden] { display: none; }
+
+.auth-submit {
+  width: 100%;
+  padding: 12px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.auth-submit:disabled { opacity: .6; cursor: default; }
+
+.auth-link {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+  padding: 6px;
+  border: none;
+  background: transparent;
+  color: #a9806c;
+  font-size: 13px;
+  text-align: center;
+  cursor: pointer;
+}
+.auth-link:hover { text-decoration: underline; }
+.auth-link[hidden] { display: none; }
+
+.auth-guest { color: #a8987f; }
+
+/* 页签 */
+.auth-tabs {
+  display: flex;
+  gap: 6px;
+  padding: 4px;
+  margin: 0 0 16px;
+  background: #f6efe4;
+  border-radius: 14px;
+}
+.auth-tabs[hidden] { display: none; }
+.auth-tab {
+  flex: 1;
+  padding: 8px 0;
+  border: none;
+  background: transparent;
+  color: #8d7663;
+  font-size: 14px;
+  border-radius: 11px;
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.auth-tab.active { background: #fffdf8; color: #6b5342; box-shadow: 0 2px 8px rgba(115, 86, 64, .1); }
+
+/* 验证码一行 */
+.auth-coderow { display: flex; gap: 8px; }
+.auth-coderow input { flex: 1; letter-spacing: 2px; }
+.auth-send {
+  flex: 0 0 auto;
+  padding: 0 14px;
+  border-radius: 13px;
+  border: 1px solid #e6d3bf;
+  background: #f7ecdd;
+  color: #8a6a52;
+  font-size: 13px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.auth-send:hover { background: #f1e2cd; }
+.auth-send:disabled { opacity: .65; cursor: default; }
+
+.auth-help { margin-top: 6px; border-top: 1px dashed #eee1d2; padding-top: 8px; }
+.auth-help[hidden] { display: none; }
+.auth-help-body {
+  margin: 2px 0 6px;
+  padding: 11px 13px;
+  border-radius: 13px;
+  background: #f7f2e9;
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: #7b6555;
+}
+.auth-help-body[hidden] { display: none; }
+.auth-help-body p { margin: 0 0 6px; }
+.auth-help-body ol { margin: 0; padding-left: 18px; }
+.auth-help-body li { margin-bottom: 4px; }
+
+.auth-account { text-align: center; padding-top: 4px; }
+.auth-account[hidden] { display: none; }
+.auth-who {
+  margin: 0 0 16px;
+  padding: 12px;
+  border-radius: 14px;
+  background: #f6f1e7;
+  font-size: 14px;
+  color: #6b5949;
+  line-height: 1.6;
+}
+.auth-logout {
+  width: 100%;
+  padding: 11px;
+  border-radius: 14px;
+  border: 1px solid #eadacb;
+  background: #f7ece0;
+  color: #8d6a56;
+  font-size: 14px;
+  cursor: pointer;
+}
+.auth-logout:hover { background: #f1e1d1; }
+.auth-logout:disabled { opacity: .6; cursor: default; }
+
+.auth-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 34px;
+  z-index: 200;
+  transform: translateX(-50%);
+  padding: 11px 18px;
+  border-radius: 999px;
+  background: rgba(84, 72, 63, .92);
+  color: #fdf8f0;
+  font-size: 13px;
+  box-shadow: 0 10px 26px rgba(84, 72, 63, .28);
+  animation: auth-toast-rise .2s ease-out;
+  pointer-events: none;
+}
+.auth-toast.out { opacity: 0; transition: opacity .5s; }
+
+@keyframes auth-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes auth-rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes auth-toast-rise {
+  from { opacity: 0; transform: translate(-50%, 10px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* 表单字段下方的规则提示（提前说，别等报错） */
+.auth-hint{display:block;font-size:12px;color:#8a8a8a;margin-top:4px;line-height:1.5}
+
+/* 倒计时按钮固定宽度，避免每秒文字变化引起表单抖动/光标跳动 */
+.auth-send{min-width:108px;white-space:nowrap}
