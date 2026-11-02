@@ -16,3 +16,16 @@
 .cal-mid{background:#6faf67}
 .cal-hi{background:#3e7d3a}
 .cal-done{opacity:.45;text-decoration:line-through}
+
+/* ===== 手绘素材替换层（js/assets.js 注入，缺失时自动回退内置图形）===== */
+.pet-img{display:none;width:100%;max-width:175px;object-fit:contain;object-position:bottom}
+.pet-wrap.idle .pet-img[data-mode="idle"],
+.pet-wrap.studying .pet-img[data-mode="studying"],
+.pet-wrap.resting .pet-img[data-mode="resting"],
+.pet-wrap.celebrate .pet-img[data-mode="celebrate"]{display:block;transform-origin:50% 85%;animation:pet-breathe 3s ease-in-out infinite}
+.pet-wrap.studying .pet-img[data-mode="studying"]{animation:pet-study 1.4s ease-in-out infinite}
+.pet-wrap.resting .pet-img[data-mode="resting"]{animation:pet-sleep 3.2s ease-in-out infinite}
+.pet-wrap.celebrate .pet-img[data-mode="celebrate"]{animation:pet-happy .55s ease-in-out 6}
+.obj-img{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none}
+.img-replaced{background:none!important;border:0!important;box-shadow:none!important}
+.img-replaced:after,.img-replaced:before{content:none!important}
