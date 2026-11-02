@@ -25,7 +25,15 @@
     }
   },
   "room": {
-    "window": { "file": "room/window.png", "desc": "窗户，可换季节/天气" },
+    "window": {
+      "file": "room/window.png",
+      "desc": "窗户默认窗景（兜底）",
+      "variants": {
+        "_说明": "同名不同后缀即可自动换装，优先级：月份 > 季节 > 默认，文件不存在自动回退，无需改代码",
+        "byMonth": "room/window-01.png ~ room/window-12.png（如 window-11.png 仅 11 月生效）",
+        "bySeason": "room/window-spring.png / window-summer.png / window-autumn.png / window-winter.png"
+      }
+    },
     "shelf": { "file": "room/shelf.png", "desc": "书架" },
     "plant": { "file": "room/plant.png", "desc": "绿植，可做多套皮肤" },
     "rug": { "file": "room/rug.png", "desc": "地毯" },
