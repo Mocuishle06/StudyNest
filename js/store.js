@@ -17,7 +17,34 @@
   var listeners = [];
 
   function defaults() {
-    return { tasks: [], resources: [], focusMinutes: 0, coins: 0, sessions: 0, updatedAt: null };
+    return {
+      tasks: [], resources: [], focusMinutes: 0, coins: 0, sessions: 0, updatedAt: null,
+      vocab: { bank: 'cet4', goal: 10, learned: {}, today: null, todayCount: 0, streak: 0, lastDay: null, rewarded: null }
+    };
+  }
+
+  /* 背单词数据单独整形：脏字段丢弃，缺字段补默认，避免旧数据把新页面打崩 */
+  function normalizeVocab(raw) {
+    var d = defaults().vocab;
+    if (!raw || typeof raw !== 'object') return d;
+    var out = {
+      bank: (raw.bank === 'cet6' || raw.bank === 'ielts') ? raw.bank : 'cet4',
+      goal: [10, 20, 30].indexOf(raw.goal) >= 0 ? raw.goal : 10,
+      learned: {},
+      today: typeof raw.today === 'string' ? raw.today : null,
+      todayCount: num(raw.todayCount, 0),
+      streak: num(raw.streak, 0),
+      lastDay: typeof raw.lastDay === 'string' ? raw.lastDay : null,
+      rewarded: typeof raw.rewarded === 'string' ? raw.rewarded : null
+    };
+    if (raw.learned && typeof raw.learned === 'object') {
+      Object.keys(raw.learned).forEach(function (k) {
+        var r = raw.learned[k];
+        if (!r || typeof r !== 'object') return;
+        out.learned[k] = { box: num(r.box, 0), due: num(r.due, 0) };
+      });
+    }
+    return out;
   }
 
   function isRecord(x) {
@@ -38,6 +65,7 @@
     out.coins = num(raw.coins, 0);
     out.sessions = num(raw.sessions, 0);
     out.updatedAt = typeof raw.updatedAt === 'string' ? raw.updatedAt : null;
+    out.vocab = normalizeVocab(raw.vocab);
     return out;
   }
 

@@ -34,11 +34,26 @@
         "bySeason": "room/window-spring.png / window-summer.png / window-autumn.png / window-winter.png"
       }
     },
-    "shelf": { "file": "room/shelf.png", "desc": "书架" },
-    "plant": { "file": "room/plant.png", "desc": "绿植，可做多套皮肤" },
-    "rug": { "file": "room/rug.png", "desc": "地毯" },
-    "desk": { "file": "room/desk.png", "desc": "书桌" },
-    "lamp": { "file": "room/lamp.png", "desc": "台灯，学习时会发光" }
+    "shelf": {
+      "file": "room/shelf.png",
+      "desc": "书架"
+    },
+    "plant": {
+      "file": "room/plant.png",
+      "desc": "绿植，可做多套皮肤"
+    },
+    "rug": {
+      "file": "room/rug.png",
+      "desc": "地毯"
+    },
+    "desk": {
+      "file": "room/desk.png",
+      "desc": "书桌"
+    },
+    "lamp": {
+      "file": "room/lamp.png",
+      "desc": "台灯，学习时会发光"
+    }
   },
   "rules": {
     "naming": "文件名严格一致，区分大小写；扩展名统一用 .png 或 .webp",
