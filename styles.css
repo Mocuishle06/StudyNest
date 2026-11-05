@@ -29,3 +29,9 @@
 .obj-img{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none}
 .img-replaced{background:none!important;border:0!important;box-shadow:none!important}
 .img-replaced:after,.img-replaced:before{content:none!important}
+
+/* ===== 窗景切换按钮（窗户右下角小药丸）===== */
+.win-switcher{position:absolute;right:6px;bottom:6px;z-index:5;border:1.5px solid #b7a98e;
+  background:rgba(255,253,248,.92);color:#6b5b45;font-size:11px;line-height:1;
+  padding:3px 8px;border-radius:999px;cursor:pointer;font-family:inherit}
+.win-switcher:hover{background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.15)}

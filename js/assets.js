@@ -3,10 +3,13 @@
  * 文件不存在则什么都不做，内置矢量版原样保留，页面绝不报错。
  * 替换只认文件名，与 manifest.json 约定一致。
  *
- * 窗景按「月份 / 季节」自动切换（优先级从高到低）：
- *   assets/room/window-<两位月份>.png   例：window-11.png（11 月专用）
- *   assets/room/window-<季节英文>.png   例：window-winter.png
- *   assets/room/window.png              默认窗景（始终兜底）
+ * 窗景有两套机制：
+ * 1) 自动：按「月份 / 季节」切换（优先级从高到低）
+ *      assets/room/window-<两位月份>.png   例：window-11.png（11 月专用）
+ *      assets/room/window-<季节英文>.png   例：window-winter.png
+ *      assets/room/window.png              默认窗景（始终兜底）
+ * 2) 手动：窗户右下角有小按钮，点击在 自动/春/夏/秋/冬 之间循环，
+ *    选择存 localStorage（studynest-window），优先级高于自动。
  * 只要把对应文件丢进 assets/room/ 就自动生效，无需改代码。 */
 (function () {
   var PET = ['idle', 'studying', 'resting', 'celebrate'];
@@ -69,8 +72,82 @@
     });
   });
 
-  /* ---- 房间物件：对应 div 换成图片（保留原位置/动画）---- */
+  /* ---- 房间物件：对应 div 换成图片（保留原位置/动画）----
+   * window 单独处理：支持手动切换季节。 */
+  var WIN_SEASONS = ['spring', 'summer', 'autumn', 'winter'];
+  var WIN_KEY = 'studynest-window';
+  var winMode = null;         // 'auto' 或季节名
+  var winSrc = {};            // 季节名 → 已探测到的路径
+
+  function mountWindow(src) {
+    document.querySelectorAll('.room .window').forEach(function (d) {
+      if (d.dataset.imgDone) {                // 已挂载：只换图
+        var im = d.querySelector('.obj-img');
+        if (im) im.src = src;
+        return;
+      }
+      d.dataset.imgDone = '1';
+      d.classList.add('img-replaced');
+      d.textContent = '';
+      var im = document.createElement('img');
+      im.className = 'obj-img';
+      im.src = src;
+      im.alt = '窗景';
+      im.draggable = false;
+      d.appendChild(im);
+      var btn = document.createElement('button');
+      btn.className = 'win-switcher';
+      btn.type = 'button';
+      btn.title = '切换窗景';
+      btn.addEventListener('click', function () {
+        // 循环：auto → 春 → 夏 → 秋 → 冬 → auto（只含已探测到的季节）
+        var order = ['auto'].concat(WIN_SEASONS.filter(function (s) { return winSrc[s]; }));
+        var i = order.indexOf(winMode);
+        winMode = order[(i + 1) % order.length];
+        try { localStorage.setItem(WIN_KEY, winMode); } catch (e) {}
+        applyWindow();
+      });
+      d.appendChild(btn);
+    });
+  }
+
+  function applyWindow() {
+    var src;
+    if (winMode && winMode !== 'auto' && winSrc[winMode]) src = winSrc[winMode];
+    else {
+      var d = new Date();
+      src = winSrc[('0' + (d.getMonth() + 1)).slice(-2)]   // 当月专属
+         || winSrc[season(d)]                               // 当季
+         || winSrc._base;                                   // 基础版兜底
+    }
+    if (src) {
+      mountWindow(src);
+      document.querySelectorAll('.room .win-switcher').forEach(function (b) {
+        b.textContent = winMode === 'auto' ? '自动'
+          : { spring: '春', summer: '夏', autumn: '秋', winter: '冬' }[winMode];
+      });
+    }
+  }
+
+  /* 探测：基础版 + 四季 + 当月专属 */
   ROOM.forEach(function (name) {
+    if (name === 'window') {
+      try { winMode = localStorage.getItem(WIN_KEY) || 'auto'; } catch (e) { winMode = 'auto'; }
+      var d = new Date();
+      var probes = ['window'].concat(WIN_SEASONS.map(function (s) { return 'window-' + s; }))
+        .concat(['window-' + ('0' + (d.getMonth() + 1)).slice(-2)]);
+      Promise.all(probes.map(function (n) {
+        return probe('assets/room/' + n + '.png').then(function (s) { return [n, s]; });
+      })).then(function (rows) {
+        rows.forEach(function (r) {
+          if (!r[1]) return;
+          var n = r[0].replace('window-', '').replace('window', '_base');
+          winSrc[n] = r[1];
+        });
+        applyWindow();
+      });
+      return;
+    }
     probeFirst(candidates(name)).then(function (src) {
       if (!src) return;
       document.querySelectorAll('.room .' + name).forEach(function (d) {
