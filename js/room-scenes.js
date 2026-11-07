@@ -128,7 +128,7 @@
     if (bt && bt.textContent !== t.bg) bt.textContent = t.bg;
     if (vt && vt.textContent !== t.view) vt.textContent = t.view;
     if (pt) {
-      var pl = window.PetAssets && window.PetAssets.label ? window.PetAssets.label() : '🐾 小猫';
+      var pl = window.PetAssets && window.PetAssets.label ? window.PetAssets.label() : '🐾 橘猫';
       if (pt.textContent !== pl) pt.textContent = pl;
     }
   }
@@ -225,7 +225,7 @@
 
   /* 切宠物套后刷新按钮文字 */
   document.addEventListener('petset:change', function () {
-    var pl = window.PetAssets && window.PetAssets.label ? window.PetAssets.label() : '🐾 小猫';
+    var pl = window.PetAssets && window.PetAssets.label ? window.PetAssets.label() : '🐾 橘猫';
     document.querySelectorAll('.room-tools .rt-pet').forEach(function (b) {
       if (b.textContent !== pl) b.textContent = pl;
     });

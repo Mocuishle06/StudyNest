@@ -57,8 +57,9 @@
    * 用户上传了自定义宠物时（.pet-wrap[data-custom]）跳过，避免与自定义图叠在一起；
    * 删除自定义后由 pet-custom.js 回调 PetAssets.mount() 重新挂回来。 */
   var PET_SETS = [
-    { id: 'cat', label: '🐾 小猫', dir: 'assets/pet/' },
-    { id: 'quokka', label: '🐾 袋鼠', dir: 'assets/pet2/' }
+    { id: 'cat', label: '🐾 橘猫', dir: 'assets/pet/' },
+    { id: 'quokka', label: '🐾 袋鼠', dir: 'assets/pet2/' },
+    { id: 'siamese', label: '🐾 暹罗', dir: 'assets/pet3/' }
   ];
   var SET_KEY = 'studynest-petset';
   var setRows = {};              // setId -> [[mode, src], ...]

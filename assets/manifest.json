@@ -31,6 +31,13 @@
     "resting": { "file": "pet2/resting.png", "desc": "袋鼠：蜷缩打盹" },
     "celebrate": { "file": "pet2/celebrate.png", "desc": "袋鼠：跳跃庆祝" }
   },
+  "pet3": {
+    "_说明": "第三套内置宠物（暹罗猫），同样走 🐾 按钮轮换；四态表情为：微笑=待机、皱眉=学习中、张嘴=打哈欠/休息、眯眼吐舌=庆祝",
+    "idle": { "file": "pet3/idle.png", "desc": "暹罗：平静微笑" },
+    "studying": { "file": "pet3/studying.png", "desc": "暹罗：皱眉苦学" },
+    "resting": { "file": "pet3/resting.png", "desc": "暹罗：张嘴打哈欠" },
+    "celebrate": { "file": "pet3/celebrate.png", "desc": "暹罗：眯眼吐舌开心" }
+  },
   "room": {
     "window": {
       "file": "room/window.png",
