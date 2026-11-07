@@ -24,6 +24,13 @@
       "desc": "庆祝：完成一轮专注时短暂播放"
     }
   },
+  "pet2": {
+    "_说明": "第二套内置宠物（短尾矮袋鼠），房间右上角 🐾 按钮切换，选择存 localStorage(studynest-petset)；用户上传的自定义宠物优先级更高",
+    "idle": { "file": "pet2/idle.png", "desc": "袋鼠：待机坐姿" },
+    "studying": { "file": "pet2/studying.png", "desc": "袋鼠：戴眼镜看书" },
+    "resting": { "file": "pet2/resting.png", "desc": "袋鼠：蜷缩打盹" },
+    "celebrate": { "file": "pet2/celebrate.png", "desc": "袋鼠：跳跃庆祝" }
+  },
   "room": {
     "window": {
       "file": "room/window.png",

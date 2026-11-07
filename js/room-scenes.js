@@ -1,7 +1,7 @@
 /* StudyNest 场景系统：手绘背景 + 窗景合成
  *
  * 背景图（bg1/bg2/bg3.jpg）自带沙发/书架/窗框，激活后：
- *   - 覆盖内置 CSS 房间（.wall/.floor/.sofa/.window/.lamp 隐藏，.bowl/.yarn 保留）
+ *   - 覆盖内置 CSS 房间（.wall/.floor/.sofa/.window/.lamp 隐藏）
  *   - 每张背景带一份「窗框玻璃区域」配置，view 风景图不透明满铺塞进去
  *     （不透明 = 完全盖住背景里原来的风景，视觉上等于把旧风景抠掉了）
  *   - 猫的座位按背景调整，且区分内置猫 / 用户自定义宠物（petC，通常更小更靠中间）
@@ -94,6 +94,9 @@
       var vb = document.createElement('button');
       vb.type = 'button';
       vb.className = 'rt-view';
+      var pb = document.createElement('button');
+      pb.type = 'button';
+      pb.className = 'rt-pet';
       bb.addEventListener('click', function () {
         var ids = ['auto'].concat(BGS.map(function (b) { return b.id; }));
         bgMode = ids[(ids.indexOf(bgMode) + 1) % ids.length];
@@ -110,15 +113,24 @@
         try { localStorage.setItem(KEY_VIEW, viewMode); } catch (e) {}
         apply();
       });
+      pb.addEventListener('click', function () {
+        if (window.PetAssets && window.PetAssets.cycle) window.PetAssets.cycle();
+      });
       tools.appendChild(bb);
       tools.appendChild(vb);
+      tools.appendChild(pb);
       room.appendChild(tools);
     }
     var t = label();
     var bt = tools.querySelector('.rt-bg');
     var vt = tools.querySelector('.rt-view');
+    var pt = tools.querySelector('.rt-pet');
     if (bt && bt.textContent !== t.bg) bt.textContent = t.bg;
     if (vt && vt.textContent !== t.view) vt.textContent = t.view;
+    if (pt) {
+      var pl = window.PetAssets && window.PetAssets.label ? window.PetAssets.label() : '🐾 小猫';
+      if (pt.textContent !== pl) pt.textContent = pl;
+    }
   }
 
   /* 猫座位：按背景微调；用户上传了自定义宠物时用 petC（更小更靠座面中间） */
@@ -201,11 +213,23 @@
   /* 自定义宠物上传/删除后重新落座 */
   document.addEventListener('petcustom:change', function () { apply(); });
 
-  /* 供全屏模式克隆房间后重新绑定按钮（cloneNode 不带事件） */
+  /* 供全屏模式克隆房间后重建按钮（cloneNode 不带事件，拆掉重建才有点击） */
   function bind(container) {
     if (!container) return;
-    container.querySelectorAll('.room').forEach(ensureTools);
+    container.querySelectorAll('.room').forEach(function (room) {
+      var t = room.querySelector('.room-tools');
+      if (t) t.remove();
+      ensureTools(room);
+    });
   }
+
+  /* 切宠物套后刷新按钮文字 */
+  document.addEventListener('petset:change', function () {
+    var pl = window.PetAssets && window.PetAssets.label ? window.PetAssets.label() : '🐾 小猫';
+    document.querySelectorAll('.room-tools .rt-pet').forEach(function (b) {
+      if (b.textContent !== pl) b.textContent = pl;
+    });
+  });
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', apply);

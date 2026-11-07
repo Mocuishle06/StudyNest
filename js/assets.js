@@ -13,7 +13,7 @@
  * 只要把对应文件丢进 assets/room/ 就自动生效，无需改代码。 */
 (function () {
   var PET = ['idle', 'studying', 'resting', 'celebrate'];
-  var ROOM = ['wall', 'floor', 'window', 'sofa', 'bowl', 'yarn', 'lamp'];
+  var ROOM = ['wall', 'floor', 'window', 'sofa', 'lamp'];
 
   function probe(src) {
     return new Promise(function (resolve) {
@@ -52,18 +52,39 @@
   }
 
   /* ---- 宠物：隐藏内置 SVG，按状态插入 4 张图（切状态由 CSS data-mode 控制）----
+   * 支持多套内置宠物：assets/pet/（小猫）与 assets/pet2/（短尾矮袋鼠），
+   * localStorage studynest-petset 记住选择；用户上传的自定义宠物仍优先（pet-custom.js）。
    * 用户上传了自定义宠物时（.pet-wrap[data-custom]）跳过，避免与自定义图叠在一起；
    * 删除自定义后由 pet-custom.js 回调 PetAssets.mount() 重新挂回来。 */
-  var petSrc = [];               // [[mode, src], ...] 已探测到的内置图
+  var PET_SETS = [
+    { id: 'cat', label: '🐾 小猫', dir: 'assets/pet/' },
+    { id: 'quokka', label: '🐾 袋鼠', dir: 'assets/pet2/' }
+  ];
+  var SET_KEY = 'studynest-petset';
+  var setRows = {};              // setId -> [[mode, src], ...]
+  var setId = (function () {
+    try {
+      var v = localStorage.getItem(SET_KEY);
+      if (v && PET_SETS.some(function (s) { return s.id === v; })) return v;
+    } catch (e) {}
+    return 'cat';
+  })();
+
+  function currentSet() {
+    var rows = setRows[setId];
+    if (rows && rows.length) return rows;
+    return setRows.cat || [];    // 所选套缺失时回退小猫
+  }
 
   function mountPets() {
-    if (!petSrc.length) return;
+    var rows = currentSet();
     document.querySelectorAll('.pet-wrap').forEach(function (w) {
       w.querySelectorAll('.pet-img[data-builtin]').forEach(function (n) { n.remove(); });
       if (w.dataset.custom) return;
       var svg = w.querySelector('.pet-svg');
+      if (!rows.length) { if (svg) svg.style.display = ''; return; }
       if (svg) svg.style.display = 'none';
-      petSrc.forEach(function (r) {
+      rows.forEach(function (r) {
         var im = document.createElement('img');
         im.className = 'pet-img';
         im.dataset.mode = r[0];
@@ -76,15 +97,32 @@
     });
   }
 
-  window.PetAssets = { mount: mountPets, src: {} };
-
-  Promise.all(PET.map(function (m) {
-    return probe('assets/pet/' + m + '.png').then(function (s) { return [m, s]; });
-  })).then(function (rows) {
-    petSrc = rows.filter(function (r) { return r[1]; });
-    if (!petSrc.length) return;
-    petSrc.forEach(function (r) { window.PetAssets.src[r[0]] = r[1]; });
+  function cycleSet() {
+    var ok = PET_SETS.filter(function (s) { return setRows[s.id] && setRows[s.id].length; });
+    if (ok.length < 2) return;
+    var ids = ok.map(function (s) { return s.id; });
+    var i = ids.indexOf(setId);
+    setId = ids[(Math.max(i, 0) + 1) % ids.length];
+    try { localStorage.setItem(SET_KEY, setId); } catch (e) {}
     mountPets();
+    try { document.dispatchEvent(new CustomEvent('petset:change')); } catch (e) {}
+  }
+
+  function setLabel() {
+    var s = PET_SETS.filter(function (x) { return x.id === setId; })[0] || PET_SETS[0];
+    return s.label;
+  }
+
+  window.PetAssets = { mount: mountPets, src: {}, cycle: cycleSet, label: setLabel };
+
+  PET_SETS.forEach(function (s) {
+    Promise.all(PET.map(function (m) {
+      return probe(s.dir + m + '.png').then(function (r) { return [m, r]; });
+    })).then(function (rows) {
+      setRows[s.id] = rows.filter(function (r) { return r[1]; });
+      setRows[s.id].forEach(function (r) { if (s.id === setId) window.PetAssets.src[r[0]] = r[1]; });
+      if (s.id === setId) mountPets();
+    });
   });
 
   /* ---- 房间物件：对应 div 换成图片（保留原位置/动画）----
