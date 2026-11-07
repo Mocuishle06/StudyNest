@@ -118,6 +118,7 @@ window.studyRender = function () { render(); };
     box.replaceChildren();
     clone = src.cloneNode(true);
     box.append(clone);
+    if (window.ROOM_SCENES) window.ROOM_SCENES.bind(box);  // 克隆不带事件，重绑场景切换按钮
   }
   function paint() {
     mountRoom();

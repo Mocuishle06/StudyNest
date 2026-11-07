@@ -114,17 +114,20 @@
       btn.className = 'win-switcher';
       btn.type = 'button';
       btn.title = '切换窗景';
-      btn.addEventListener('click', function () {
-        // 循环：auto → 春 → 夏 → 秋 → 冬 → auto（只含已探测到的季节）
-        var order = ['auto'].concat(WIN_SEASONS.filter(function (s) { return winSrc[s]; }));
-        var i = order.indexOf(winMode);
-        winMode = order[(i + 1) % order.length];
-        try { localStorage.setItem(WIN_KEY, winMode); } catch (e) {}
-        applyWindow();
-      });
+      btn.addEventListener('click', function () { cycleWin(); });
       d.appendChild(btn);
     });
   }
+
+  /* 循环切换四季（窗上小按钮与场景系统的窗景按钮共用） */
+  function cycleWin() {
+    var order = ['auto'].concat(WIN_SEASONS.filter(function (s) { return winSrc[s]; }));
+    var i = order.indexOf(winMode);
+    winMode = order[(i + 1) % order.length];
+    try { localStorage.setItem(WIN_KEY, winMode); } catch (e) {}
+    applyWindow();
+  }
+  window.WinCycle = cycleWin;
 
   function applyWindow() {
     var src;

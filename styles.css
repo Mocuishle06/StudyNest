@@ -150,3 +150,25 @@ body.fs-open{overflow:hidden}
 body.pm-lock{overflow:hidden}
 .pet-wrap[data-custom="1"] .pet-svg{display:none}
 @media(max-width:560px){.pm-slots{grid-template-columns:1fr 1fr;gap:9px}.pms{padding:9px}.pms-prev{height:82px}.pm-box{padding:16px 15px 14px;border-radius:20px}}
+
+/* ===== 场景系统：手绘背景 + 窗景合成 ===== */
+.room[data-scene] .wall,
+.room[data-scene] .floor,
+.room[data-scene] .sofa,
+.room[data-scene] .window,
+.room[data-scene] .lamp{display:none}
+.bg-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;display:block}
+.bg-view{position:absolute;z-index:2;pointer-events:none;overflow:hidden}
+.bg-view img{width:100%;height:100%;object-fit:cover;display:block}
+.room-tools{position:absolute;top:8px;right:8px;z-index:9;display:none;gap:6px}
+.room[data-scene] .room-tools{display:flex}
+.room-tools button{font-size:11px;line-height:1.3;padding:5px 10px;border-radius:999px;white-space:nowrap;
+  background:#fffdf7d9;border:1px solid #e8d5bd;color:#8a6a54;backdrop-filter:blur(2px);box-shadow:0 2px 6px #73564014}
+.room-tools button:hover{background:#fff6e6}
+/* 各背景的猫座位（沙发位置不同） */
+.room[data-scene="bg1"] .pet-wrap{left:29%;width:36%;bottom:21%}
+.room[data-scene="bg2"] .pet-wrap{left:27%;width:38%;bottom:24%}
+.room[data-scene="bg3"] .pet-wrap{left:24%;width:28%;bottom:26%}
+/* 背景模式下气泡右移避开右上角按钮；内置模式不变 */
+.room[data-scene] .speech{left:30%;max-width:46%}
+/* 内置模式的旧四季切换按钮在背景模式下随 .window 一起消失（.window 已隐藏） */
