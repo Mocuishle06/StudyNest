@@ -80,3 +80,35 @@ button.vocab-no:hover{background:#f2d9d1}
   .cal-total{font-size:9px;padding:1px 4px}
   .cal-more{font-size:9px}
 }
+
+/* ===== 房间部件改版：墙 / 地板 / 窗 / 沙发 / 猫食盆 / 毛线球 / 落地灯 / 猫 ===== */
+.wall{position:absolute;inset:0 0 28% 0;z-index:0;pointer-events:none}
+.floor{position:absolute;left:0;right:0;bottom:0;height:28%;z-index:1;pointer-events:none}
+.window{z-index:2}
+.sofa{position:absolute;z-index:2;left:24%;width:52%;bottom:7%;height:21%;background:#c89474;border:4px solid #a8755a;border-radius:20px 20px 14px 14px;box-shadow:0 8px 0 #9a6a50}
+.sofa:before{content:'';position:absolute;left:5%;right:5%;top:12%;height:30%;background:#e3ba98;border-radius:14px}
+.sofa:after{content:'';position:absolute;left:7%;right:7%;bottom:7%;height:24%;background:#dcae8a;border-radius:10px}
+.lamp{right:7%;bottom:21%;z-index:3;font-size:clamp(26px,4.6vw,50px)}
+.bowl{position:absolute;left:7%;bottom:4%;width:13%;z-index:3;font-size:clamp(20px,3.4vw,34px);line-height:1;text-align:center}
+.yarn{position:absolute;right:9%;bottom:3%;width:11%;z-index:3;font-size:clamp(18px,3.2vw,30px);line-height:1;text-align:center}
+.pet-wrap{left:32%;width:37%;bottom:19%;height:42%;z-index:4}
+.pet-wrap .pet-svg,.pet-wrap .pet-img{max-width:300px}
+.sparkles{z-index:5}
+.speech{z-index:6}
+
+/* ===== 全屏专注 ===== */
+.fs{position:fixed;inset:0;z-index:200;display:none;flex-direction:column;gap:8px;padding:14px 18px 18px;background:radial-gradient(ellipse at 50% -12%,#fff6df,transparent 55%),#faf5ec}
+.fs.on{display:flex}
+.fs-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.fs-head-r{display:flex;align-items:center;gap:10px;min-width:0}
+.fs-head-r .muted{max-width:44vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fs-room{flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center}
+.fs-room .room{width:auto;height:100%;min-height:0;max-width:100%;border-radius:28px}
+.fs-clock{text-align:center;font-size:clamp(52px,11vh,118px);font-weight:800;line-height:1;letter-spacing:2px;font-variant-numeric:tabular-nums;color:#805e4f}
+.fs-stats{display:flex;justify-content:center;gap:clamp(18px,4vw,40px);flex-wrap:wrap}
+.fs-stats>div{display:flex;flex-direction:column;align-items:center;gap:2px}
+.fs-stats b{font-size:clamp(17px,2.4vw,22px);color:#9c7964}
+.fs-stats span{font-size:12px;color:#99877a}
+.fs-actions{display:flex;justify-content:center;gap:10px}
+body.fs-open{overflow:hidden}
+@media(max-width:720px){.fs{padding:10px 12px 14px}.fs-room .room{width:100%;height:auto}.fs-clock{font-size:clamp(44px,9vh,72px)}}

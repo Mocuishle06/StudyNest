@@ -13,7 +13,7 @@
  * 只要把对应文件丢进 assets/room/ 就自动生效，无需改代码。 */
 (function () {
   var PET = ['idle', 'studying', 'resting', 'celebrate'];
-  var ROOM = ['window', 'shelf', 'desk', 'lamp', 'plant', 'rug'];
+  var ROOM = ['wall', 'floor', 'window', 'sofa', 'bowl', 'yarn', 'lamp'];
 
   function probe(src) {
     return new Promise(function (resolve) {

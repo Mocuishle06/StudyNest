@@ -98,3 +98,57 @@ renderCalendar();
 window.studyData = data;
 window.studySave = save;
 window.studyRender = function () { render(); };
+
+/* ===== 全屏专注：把房间 + 计时 + 金币铺满整屏（复用同一份计时状态，不另起一套） ===== */
+(function () {
+  const ov = $('fsOverlay'), box = $('fsRoom'), clk = $('fsClock'), tog = $('fsToggle');
+  if (!ov || !box || !clk) return;
+  let timer = null, clone = null;
+
+  function secs() {
+    return active ? Math.max(0, Math.ceil((endAt - Date.now()) / 1000)) : remaining;
+  }
+  function mmss(s) {
+    return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+  }
+  function mountRoom() {
+    const src = document.querySelector('#focus .room');
+    if (!src) return;
+    if (clone && clone.querySelectorAll('img').length === src.querySelectorAll('img').length) return;
+    box.replaceChildren();
+    clone = src.cloneNode(true);
+    box.append(clone);
+  }
+  function paint() {
+    mountRoom();
+    clk.textContent = mmss(secs());
+    $('fsCoins').textContent = data.coins;
+    $('fsFocus').textContent = data.focusMinutes;
+    $('fsSessions').textContent = data.sessions || 0;
+    tog.textContent = active ? '暂停' : (secs() < duration ? '继续专注' : '开始专注');
+    const sel = $('focusTask');
+    const opt = sel && sel.selectedIndex > -1 ? sel.options[sel.selectedIndex] : null;
+    $('fsTask').textContent = opt && opt.value ? '📌 ' + opt.textContent : '';
+  }
+  function open() {
+    ov.classList.add('on');
+    ov.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('fs-open');
+    paint();
+    timer = setInterval(paint, 250);
+  }
+  function close() {
+    ov.classList.remove('on');
+    ov.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('fs-open');
+    if (timer) clearInterval(timer);
+    timer = null;
+    box.replaceChildren();
+    clone = null;
+  }
+  $('fsOpen').onclick = open;
+  $('fsClose').onclick = close;
+  tog.onclick = () => { if (active) $('pauseTimer').click(); else $('startTimer').click(); paint(); };
+  $('fsReset').onclick = () => { $('resetTimer').click(); paint(); };
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && ov.classList.contains('on')) close(); });
+})();
