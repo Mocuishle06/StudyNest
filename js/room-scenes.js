@@ -26,11 +26,11 @@
       pet:  { left: 30, width: 35, bottom: 22 },
       petC: { left: 31, width: 32, bottom: 22 } },
     { id: 'bg2', name: '暖木书吧', src: 'assets/room/bg2.jpg',
-      view: { left: 45.9, top: 23.6, width: 12.4, height: 25.8 },
+      view: { left: 43.7, top: 22.4, width: 12.3, height: 28.2 },   // 玻璃区实测 x562-720 y203-455（含内窗台）
       pet:  { left: 29, width: 37, bottom: 24 },
       petC: { left: 30.5, width: 33, bottom: 23 } },
     { id: 'bg3', name: '古典书房', src: 'assets/room/bg3.jpg',
-      view: { left: 42.2, top: 24.6, width: 23.8, height: 31.2 },
+      view: { left: 39.2, top: 22.6, width: 23.0, height: 33.2 },   // 玻璃区实测 x505-800 y205-500（右缘到窗帘前）
       pet:  { left: 24.5, width: 26, bottom: 22 },
       petC: { left: 26, width: 23, bottom: 21.5 } }
   ];
