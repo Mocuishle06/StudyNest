@@ -148,6 +148,8 @@ window.studyRender = function () { render(); };
     clone = null;
   }
   $('fsOpen').onclick = open;
+  const fsPet = $('fsPet');
+  if (fsPet) fsPet.onclick = () => { if (window.PetCustom) window.PetCustom.open(); };
   $('fsClose').onclick = close;
   tog.onclick = () => { if (active) $('pauseTimer').click(); else $('startTimer').click(); paint(); };
   $('fsReset').onclick = () => { $('resetTimer').click(); paint(); };

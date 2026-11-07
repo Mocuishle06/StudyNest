@@ -2,11 +2,13 @@
  *
  * 背景图（bg1/bg2/bg3.jpg）自带沙发/书架/窗框，激活后：
  *   - 覆盖内置 CSS 房间（.wall/.floor/.sofa/.window/.lamp 隐藏，.bowl/.yarn 保留）
- *   - 每张背景带一份「窗框玻璃区域」配置，view 风景图精确塞进去（百分比定位，随房间缩放）
- *   - 猫的座位也按背景调整（三张背景的沙发位置不同）
- * 窗景（view-spring/winter/autumn.jpg）：白底 = 过曝天空，与木窗框自然衔接。
+ *   - 每张背景带一份「窗框玻璃区域」配置，view 风景图不透明满铺塞进去
+ *     （不透明 = 完全盖住背景里原来的风景，视觉上等于把旧风景抠掉了）
+ *   - 猫的座位按背景调整，且区分内置猫 / 用户自定义宠物（petC，通常更小更靠中间）
+ * 窗景（view-spring/winter/autumn.jpg）：不透明水彩块，边缘无白底。
  *
- * 切换按钮在房间右上角（.room-tools），仅背景模式显示；内置房间沿用旧四季窗景。
+ * 切换按钮（.room-tools）始终显示——包括内置房间模式，否则切到内置后没法切回来。
+ * 内置模式下窗景按钮调用 assets.js 的 window.WinCycle 切旧四季窗景。
  * 状态存 localStorage：studynest-bg（auto/bg1..3）、studynest-view（auto/spring/..）。
  */
 (function () {
@@ -15,23 +17,28 @@
   var KEY_BG = 'studynest-bg';
   var KEY_VIEW = 'studynest-view';
 
-  /* view/pet 坐标为相对 .room 的百分比（left/top/width/height/bottom） */
+  /* view/pet 坐标为相对 .room 的百分比（left/top/width/height/bottom）
+   * view = 窗框玻璃区域（实测自 1280 宽背景图，微扩 0.3% 盖住玻璃边缘，防止旧风景露边）
+   * pet  = 内置猫座位；petC = 自定义宠物座位（用户图常比内置猫大，缩小居中防悬空） */
   var BGS = [
     { id: 'bg1', name: '绿植书房', src: 'assets/room/bg1.jpg',
-      view: { left: 39.6, top: 25.8, width: 19.6, height: 31.7 },
-      pet:  { left: 29, width: 36, bottom: 21 } },
+      view: { left: 39.8, top: 25.9, width: 22.2, height: 32.2 },
+      pet:  { left: 30, width: 35, bottom: 22 },
+      petC: { left: 31, width: 32, bottom: 22 } },
     { id: 'bg2', name: '暖木书吧', src: 'assets/room/bg2.jpg',
-      view: { left: 42.4, top: 21.2, width: 12.2, height: 30.5 },
-      pet:  { left: 27, width: 38, bottom: 24 } },
+      view: { left: 45.9, top: 23.6, width: 12.4, height: 25.8 },
+      pet:  { left: 29, width: 37, bottom: 24 },
+      petC: { left: 30.5, width: 33, bottom: 23 } },
     { id: 'bg3', name: '古典书房', src: 'assets/room/bg3.jpg',
-      view: { left: 41.9, top: 21.2, width: 17.9, height: 30.8 },
-      pet:  { left: 24, width: 28, bottom: 26 } }
+      view: { left: 42.2, top: 24.6, width: 23.8, height: 31.2 },
+      pet:  { left: 24.5, width: 26, bottom: 22 },
+      petC: { left: 26, width: 23, bottom: 21.5 } }
   ];
 
   var VIEWS = [
-    { id: 'spring', name: '春·绿荫', src: 'assets/room/view-spring.png' },
-    { id: 'autumn', name: '秋·金叶', src: 'assets/room/view-autumn.png' },
-    { id: 'winter', name: '冬·落雪', src: 'assets/room/view-winter.png' }
+    { id: 'spring', name: '春·绿荫', src: 'assets/room/view-spring.jpg' },
+    { id: 'autumn', name: '秋·金叶', src: 'assets/room/view-autumn.jpg' },
+    { id: 'winter', name: '冬·落雪', src: 'assets/room/view-winter.jpg' }
   ];
 
   function pref(key, list) {
@@ -94,8 +101,10 @@
         apply();
       });
       vb.addEventListener('click', function () {
-        // 仅背景模式可达（按钮随 .room-tools 只在背景模式渲染）；
-        // 内置房间的四季切换用窗上的小按钮（assets.js 的 win-switcher）。
+        if (bgMode === 'auto') {            // 内置房间：窗景交给旧四季机制（窗上小按钮同款）
+          if (window.WinCycle) window.WinCycle();
+          return;
+        }
         var ids = ['auto'].concat(VIEWS.map(function (v) { return v.id; }));
         viewMode = ids[(ids.indexOf(viewMode) + 1) % ids.length];
         try { localStorage.setItem(KEY_VIEW, viewMode); } catch (e) {}
@@ -110,6 +119,21 @@
     var vt = tools.querySelector('.rt-view');
     if (bt && bt.textContent !== t.bg) bt.textContent = t.bg;
     if (vt && vt.textContent !== t.view) vt.textContent = t.view;
+  }
+
+  /* 猫座位：按背景微调；用户上传了自定义宠物时用 petC（更小更靠座面中间） */
+  function placePet(room, bg) {
+    var pet = room.querySelector('.pet-wrap');
+    if (!pet) return;
+    if (!bg) {                            // 内置房间：恢复 CSS 默认
+      pet.style.left = ''; pet.style.width = ''; pet.style.bottom = '';
+      return;
+    }
+    var custom = window.PetCustom && window.PetCustom.count && window.PetCustom.count() > 0;
+    var c = (custom && bg.petC) ? bg.petC : bg.pet;
+    pet.style.left = c.left + '%';
+    pet.style.width = c.width + '%';
+    pet.style.bottom = c.bottom + '%';
   }
 
   function mountScene(room, bg) {
@@ -153,22 +177,29 @@
       vi.dataset.view = v.id;
     }
 
+    placePet(room, bg);
     ensureTools(room);
   }
 
   function apply() {
     var bg = findBg();
     document.querySelectorAll('.room').forEach(function (room) {
-      if (bg) mountScene(room, bg);
-      else {
+      if (bg) {
+        mountScene(room, bg);
+      } else {
         delete room.dataset.scene;
-        ['bg-img', 'bg-view', 'room-tools'].forEach(function (cls) {
+        ['bg-img', 'bg-view'].forEach(function (cls) {
           var n = room.querySelector('.' + cls);
           if (n) n.remove();
         });
+        placePet(room, null);
       }
+      ensureTools(room);                  // 内置模式也保留按钮，否则切不回来
     });
   }
+
+  /* 自定义宠物上传/删除后重新落座 */
+  document.addEventListener('petcustom:change', function () { apply(); });
 
   /* 供全屏模式克隆房间后重新绑定按钮（cloneNode 不带事件） */
   function bind(container) {

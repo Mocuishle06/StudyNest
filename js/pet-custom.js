@@ -79,6 +79,15 @@
 
   function apply() {
     var any = hasAny();
+    // 先把还没裁边的图排进裁剪队列（完成后触发一次重绘）
+    if (any) {
+      MODES.forEach(function (m) {
+        var s = srcFor(m.k);
+        if (s && !Object.prototype.hasOwnProperty.call(trimCache, s)) {
+          trimSrc(s, function (t) { if (t !== s) apply(); });
+        }
+      });
+    }
     document.querySelectorAll('.pet-wrap').forEach(function (w) {
       // 清掉上一轮插入的自定义图
       w.querySelectorAll('.pet-img[data-custom]').forEach(function (n) { n.remove(); });
@@ -103,7 +112,7 @@
         im.className = 'pet-img';
         im.dataset.mode = m.k;
         im.dataset.custom = '1';
-        im.src = src;
+        im.src = trimCache[src] || src;      // 裁过边用裁后的，还没裁完先用原图
         im.alt = '我的宠物（' + m.n + '）';
         im.draggable = false;
         w.appendChild(im);
@@ -114,9 +123,57 @@
     if (!any && window.PetAssets && typeof window.PetAssets.mount === 'function') {
       window.PetAssets.mount();
     }
+    // 通知场景系统重新落座（自定义宠物的座位与内置猫不同）
+    try { document.dispatchEvent(new CustomEvent('petcustom:change')); } catch (e) {}
   }
 
   /* ---------------- 图片处理 ---------------- */
+
+  /* 自动裁掉四周的透明边：让宠物脚底贴住画布底边，避免各个背景里悬空/陷进沙发。
+   * 结果缓存在 trimCache（key 为原 dataURL）；无需裁剪时缓存 null。 */
+  var trimCache = {};
+
+  function trimSrc(src, cb) {
+    if (Object.prototype.hasOwnProperty.call(trimCache, src)) { cb(trimCache[src] || src); return; }
+    var im = new Image();
+    im.onload = function () {
+      try {
+        var w = im.naturalWidth || im.width, h = im.naturalHeight || im.height;
+        var c = document.createElement('canvas');
+        c.width = w; c.height = h;
+        var cx = c.getContext('2d');
+        cx.drawImage(im, 0, 0);
+        var d = cx.getImageData(0, 0, w, h).data;
+        var top = h, bottom = -1, left = w, right = -1;
+        for (var y = 0; y < h; y++) {
+          for (var x = 0; x < w; x++) {
+            if (d[(y * w + x) * 4 + 3] > 24) {
+              if (y < top) top = y;
+              if (y > bottom) bottom = y;
+              if (x < left) left = x;
+              if (x > right) right = x;
+            }
+          }
+        }
+        if (bottom < 0) { trimCache[src] = null; cb(src); return; }   // 全透明，不处理
+        var pad = Math.max(1, Math.round(Math.max(w, h) * 0.008));
+        var t = Math.max(0, top - pad), l = Math.max(0, left - pad);
+        var b = Math.min(h - 1, bottom + pad), r = Math.min(w - 1, right + pad);
+        if (t === 0 && l === 0 && b === h - 1 && r === w - 1) {
+          trimCache[src] = null; cb(src); return;                     // 已经贴边
+        }
+        var cw = r - l + 1, ch = b - t + 1;
+        var o = document.createElement('canvas');
+        o.width = cw; o.height = ch;
+        o.getContext('2d').drawImage(c, l, t, cw, ch, 0, 0, cw, ch);
+        var out = o.toDataURL('image/png');
+        trimCache[src] = out;
+        cb(out);
+      } catch (e) { trimCache[src] = null; cb(src); }
+    };
+    im.onerror = function () { trimCache[src] = null; cb(src); };
+    im.src = src;
+  }
 
   function shrink(file) {
     return new Promise(function (resolve, reject) {
