@@ -51,25 +51,40 @@
     return list;
   }
 
-  /* ---- 宠物：隐藏内置 SVG，按状态插入 4 张图（切状态由 CSS data-mode 控制）---- */
-  Promise.all(PET.map(function (m) {
-    return probe('assets/pet/' + m + '.png').then(function (s) { return [m, s]; });
-  })).then(function (rows) {
-    var ok = rows.filter(function (r) { return r[1]; });
-    if (!ok.length) return;
+  /* ---- 宠物：隐藏内置 SVG，按状态插入 4 张图（切状态由 CSS data-mode 控制）----
+   * 用户上传了自定义宠物时（.pet-wrap[data-custom]）跳过，避免与自定义图叠在一起；
+   * 删除自定义后由 pet-custom.js 回调 PetAssets.mount() 重新挂回来。 */
+  var petSrc = [];               // [[mode, src], ...] 已探测到的内置图
+
+  function mountPets() {
+    if (!petSrc.length) return;
     document.querySelectorAll('.pet-wrap').forEach(function (w) {
+      w.querySelectorAll('.pet-img[data-builtin]').forEach(function (n) { n.remove(); });
+      if (w.dataset.custom) return;
       var svg = w.querySelector('.pet-svg');
       if (svg) svg.style.display = 'none';
-      ok.forEach(function (r) {
+      petSrc.forEach(function (r) {
         var im = document.createElement('img');
         im.className = 'pet-img';
         im.dataset.mode = r[0];
+        im.dataset.builtin = '1';
         im.src = r[1];
         im.alt = '学习伙伴';
         im.draggable = false;
         w.appendChild(im);
       });
     });
+  }
+
+  window.PetAssets = { mount: mountPets, src: {} };
+
+  Promise.all(PET.map(function (m) {
+    return probe('assets/pet/' + m + '.png').then(function (s) { return [m, s]; });
+  })).then(function (rows) {
+    petSrc = rows.filter(function (r) { return r[1]; });
+    if (!petSrc.length) return;
+    petSrc.forEach(function (r) { window.PetAssets.src[r[0]] = r[1]; });
+    mountPets();
   });
 
   /* ---- 房间物件：对应 div 换成图片（保留原位置/动画）----

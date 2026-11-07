@@ -112,3 +112,41 @@ button.vocab-no:hover{background:#f2d9d1}
 .fs-actions{display:flex;justify-content:center;gap:10px}
 body.fs-open{overflow:hidden}
 @media(max-width:720px){.fs{padding:10px 12px 14px}.fs-room .room{width:100%;height:auto}.fs-clock{font-size:clamp(44px,9vh,72px)}}
+
+/* ===== 自定义宠物：入口按钮 + 上传弹窗 ===== */
+.h2-row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.card.center .h2-row{justify-content:center;gap:14px}
+.pet-open{font-size:12.5px;padding:6px 11px;border-radius:999px;background:#fdf3e3;border:1px solid #ecd9c0;color:#96755f;line-height:1.2}
+.pet-open:hover{background:#f9e7cd}
+
+.pm{position:fixed;inset:0;z-index:300;display:none;align-items:center;justify-content:center;padding:16px;background:#4a372c66;backdrop-filter:blur(3px)}
+.pm.on{display:flex}
+.pm-box{width:100%;max-width:640px;max-height:92vh;overflow:auto;background:#fffdf8;border:1px solid #eadfd1;border-radius:24px;padding:20px 22px 18px;box-shadow:0 24px 60px #4a372c33}
+.pm-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.pm-head h3{font-size:18px;margin:0;color:#7d5c49}
+.pm-x{border:none;background:#f5e9db;width:32px;height:32px;padding:0;border-radius:50%;font-size:14px;line-height:1;color:#8b6f5d}
+.pm-hint{font-size:12.5px;line-height:1.75;color:#99877a;margin:0 0 14px}
+.pm-hint b{color:#8a6a54}
+.pm-slots{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pms{display:flex;flex-direction:column;gap:8px;padding:12px;border:1px dashed #e5d5c2;border-radius:16px;background:#fdf9f2}
+.pms.has{border-style:solid;border-color:#e8d6bf;background:#fffaf2}
+.pms-prev{position:relative;height:104px;border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center;
+  background-color:#fffdf8;
+  background-image:linear-gradient(45deg,#f2e9dc 25%,transparent 25%,transparent 75%,#f2e9dc 75%),linear-gradient(45deg,#f2e9dc 25%,transparent 25%,transparent 75%,#f2e9dc 75%);
+  background-size:16px 16px;background-position:0 0,8px 8px;border:1px solid #f0e4d5}
+.pms-prev img{max-width:100%;max-height:100%;object-fit:contain;display:block}
+.pms-empty{font-size:26px;color:#d6c2ae}
+.pms-name{font-size:13.5px;font-weight:700;color:#7d5c49;line-height:1.4}
+.pms-name small{display:block;font-weight:400;font-size:11.5px;color:#a89484}
+.pms-acts{display:flex;gap:6px}
+.pms-btn{flex:1;text-align:center;font-size:12.5px;padding:7px 8px;border-radius:11px;border:1px solid #eadacb;background:#f5e9db;color:#795e4f;cursor:pointer;transition:background .15s}
+.pms-btn:hover{background:#eedbc8}
+.pms-del{font-size:12.5px;padding:7px 10px;border-radius:11px;background:#fdf1ef;border-color:#f0d8d3;color:#a75858}
+.pms-del:hover{background:#f9e5e1}
+.pm-tip{min-height:0;max-height:0;overflow:hidden;font-size:12.5px;color:#8a6a54;transition:max-height .2s,opacity .2s;opacity:0}
+.pm-tip.on{max-height:60px;opacity:1;margin:10px 0 0}
+.pm-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:14px;padding-top:12px;border-top:1px solid #f2e7da}
+.pm-foot button{font-size:12.5px;padding:8px 12px}
+body.pm-lock{overflow:hidden}
+.pet-wrap[data-custom="1"] .pet-svg{display:none}
+@media(max-width:560px){.pm-slots{grid-template-columns:1fr 1fr;gap:9px}.pms{padding:9px}.pms-prev{height:82px}.pm-box{padding:16px 15px 14px;border-radius:20px}}
